@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gamse_Over | Bio</title>
     <style>
-        /* === 1. CSS Стили === */
+        /* === 1. CSS Стили (Общие) === */
         :root {
             --bg-dark: #05030a; 
             --text-color: #f0f0f0;
@@ -30,7 +30,7 @@
             width: 90%;
             border: 1px solid var(--accent-color); 
             animation: fadeIn 1.5s ease-in-out;
-            z-index: 1;
+            z-index: 10; 
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -56,7 +56,7 @@
         .info-box p { margin: 8px 0; font-size: 1.15em; }
         .info-box strong { color: var(--secondary-accent); } 
         
-        /* СТИЛИ ДЛЯ ПЛЕЕРА (НАСТРОЕННЫЙ НА ГЛОБАЛЬНЫЙ ФИЛЬТР) */
+        /* КАСТОМНЫЙ АУДИО-ПЛЕЕР */
         .music-container-custom {
             margin-top: 30px;
             padding: 20px; 
@@ -66,29 +66,30 @@
             text-align: center;
         }
         
-        /* СТИЛИЗАЦИЯ КОНТРОЛОВ (Сделаем их неоновыми) */
         .player-controls {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 10px 0;
+            padding: 5px 0;
         }
 
         .play-btn {
-            /* Кнопка Play будет стилизована через JS/CSS Filter */
-            background: none;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-accent));
+            color: white;
             border: none;
-            color: var(--text-color); /* Цвет кнопки будет меняться фильтром */
-            font-size: 2em; /* Больше для лучшей кликабельности */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.8em;
             cursor: pointer;
-            text-shadow: 0 0 10px var(--accent-color); /* Тень для свечения */
+            box-shadow: 0 0 20px var(--accent-color); 
             transition: transform 0.1s;
         }
         .play-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px white; 
         }
         
-        /* ПРОГРЕСС-БАР */
         .progress-bar-container {
             flex-grow: 1;
             height: 10px;
@@ -114,7 +115,7 @@
             text-align: center;
         }
 
-        /* КОНТРОЛЫ ГРОМКОСТИ (Стилизуем ползунок) */
+        /* КОНТРОЛЫ ГРОМКОСТИ */
         .volume-controls {
             display: flex;
             align-items: center;
@@ -135,7 +136,6 @@
             border-radius: 3px;
             cursor: pointer;
         }
-        /* Стилизация ползунка (Thumb) для WebKit (Chrome/Safari) */
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 12px;
@@ -143,7 +143,6 @@
             border-radius: 50%;
             background: var(--accent-color);
             cursor: pointer;
-            box-shadow: 0 0 5px var(--accent-color);
         }
         
         .links a { color: #ffddff; text-decoration: none; margin: 0 18px; font-size: 1.2em; transition: color 0.3s, text-shadow: 0.3s; }
@@ -171,7 +170,7 @@
             <p><strong>День Рождения:</strong> 31 Декабря</p>
         </div>
 
-        <!-- КАСТОМНЫЙ АУДИО-ПЛЕЕР (Стиль, примененный через фильтр) -->
+        <!-- КАСТОМНЫЙ АУДИО-ПЛЕЕР -->
         <div class="music-container-custom">
             
             <div class="player-controls">
@@ -202,7 +201,7 @@
         </div>
     </div>
 
-    <!-- === JavaScript для возраста И НОВОГО ПЛЕЕРА === -->
+    <!-- === JavaScript для возраста И НОВОГО ПЛЕЕРА (Финальная версия) === -->
     <script>
         // 1. РАСЧЕТ ВОЗРАСТА (2006)
         const birthDate = new Date("2006-12-31T00:00:00"); 
@@ -279,7 +278,7 @@
             else { volumeIcon.textContent = '🔊'; }
         });
         
-        // --- АКТИВАЦИЯ ЗВУКА ПРИ ПЕРВОМ ВЗАИМОДЕЙСТВИИ (Кнопка Play) ---
+        // --- АВТОПЛЕЙ ПО ПЕРВОМУ КЛИКУ (НА КНОПКЕ PLAY) ---
         playPauseBtn.addEventListener('click', () => {
             togglePlay();
             audio.muted = false; 
