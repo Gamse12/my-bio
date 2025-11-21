@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamse_Over | Bio</title>
+    <style>
+        /* === 1. CSS Стили (Общие) === */
+        :root {
+            --bg-dark: #05030a; 
+            --text-color: #f0f0f0;
+            --accent-color: #ff0055; /* Ярко-красный */
+            --secondary-accent: #a020f0; /* Насыщенный фиолетовый */
+            --card-bg: rgba(15, 10, 25, 0.95); 
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body { font-family: var(--font-main); color: var(--text-color); margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--bg-dark); text-align: center; }
+        
+        #background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -100; filter: brightness(0.3) contrast(1.3); }
+        
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 3px; 
+            box-shadow: 
+                0 0 50px rgba(255, 0, 85, 0.6), /* Красное свечение */
+                0 0 15px rgba(160, 32, 240, 0.5); /* Фиолетовый контур */
+            padding: 40px;
+            max-width: 650px;
+            width: 90%;
+            border: 1px solid var(--accent-color); 
+            animation: fadeIn 1.5s ease-in-out;
+            z-index: 10; /* Контейнер поверх оверлея */
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h1 {
+            background: linear-gradient(135deg, var(--secondary-accent) 0%, var(--accent-color) 50%, #ff6699 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; 
+            font-size: 3.8em;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--accent-color); 
+        }
+        
+        .profile-avatar { width: 150px; height: 150px; border-radius: 5px; border: 4px solid var(--accent-color); margin: 0 auto 25px; object-fit: cover; animation: pulseShadow 3s infinite alternate; }
+        @keyframes pulseShadow {
+            0% { box-shadow: 0 0 10px var(--accent-color); }
+            100% { box-shadow: 0 0 25px var(--secondary-accent); }
+        }
+
+        .info-box { margin: 25px 0; padding: 20px; border-left: 5px solid var(--accent-color); background-color: rgba(255, 0, 85, 0.1); text-align: left; }
+        .info-box p { margin: 8px 0; font-size: 1.15em; }
+        .info-box strong { color: var(--secondary-accent); } 
+        
+        /* КАСТОМНЫЙ АУДИО-ПЛЕЕР */
+        .music-container-custom {
+            margin-top: 30px;
+            padding: 20px; 
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.7); 
+            border: 1px solid var(--secondary-accent);
+            text-align: center;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 5px 0;
+        }
+
+        .play-btn {
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-accent));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.8em;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--accent-color); 
+            transition: transform 0.1s, box-shadow 0.3s;
+        }
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px white; /* Ярче светится при наведении */
+        }
+        
+        .progress-bar-container {
+            flex-grow: 1;
+            height: 10px;
+            background-color: #222;
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+            margin: 0 15px;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%; 
+            background: linear-gradient(90deg, var(--secondary-accent), var(--accent-color));
+            border-radius: 5px;
+            transition: width 0.1s linear; /* Плавное движение полоски */
+        }
+        
+        .time-display {
+            font-size: 0.9em;
+            color: var(--secondary-accent);
+            width: 80px; 
+            text-align: center;
+        }
+
+        /* КОНТРОЛЫ ГРОМКОСТИ */
+        .volume-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            width: 100px; 
+        }
+        .volume-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .volume-slider {
+            width: 60px;
+            height: 5px;
+            background-color: #333;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+        
+        .links a { color: #ffddff; text-decoration: none; margin: 0 18px; font-size: 1.2em; transition: color 0.3s, text-shadow: 0.3s; }
+        .links a:hover { color: var(--accent-color); text-shadow: 0 0 10px var(--accent-color); }
+
+        /* --- ЭЛЕМЕНТ ТРИГГЕРА АВТОПЛЕЯ --- */
+        #audioOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); 
+            z-index: 1000; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(3px);
+        }
+        #overlay-text {
+            font-size: 1.8em;
+            color: var(--text-color);
+            text-shadow: 0 0 15px var(--secondary-accent);
+            padding: 25px 40px;
+            border: 3px solid var(--accent-color);
+            border-radius: 8px;
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 25px var(--accent-color); }
+            to { box-shadow: 0 0 50px var(--secondary-accent); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- АУДИО-ОБЕРТКА (Триггер для автоплея) -->
+    <div id="audioOverlay">
+        <p id="overlay-text">Нажмите, чтобы активировать фоновую музыку!</p>
+    </div>
+
+    <!-- ВИДЕОФОН -->
+    <video autoplay loop muted playsinline id="background-video">
+        <source src="bg_edit.mp4" type="video/mp4">
+        Ваш браузер не поддерживает теги видео.
+    </video>
+
+    <div class="container">
+        
+        <img src="dima_avatar.jpg" alt="Profile Avatar" class="profile-avatar"> 
+        
+        <h1>Gamse_Over</h1>
+
+        <!-- ИНФО-БОКС -->
+        <div class="info-box">
+            <p><strong>Имя:</strong> Дима</p>
+            <p><strong>Возраст:</strong> <span id="age">...</span> лет</p>
+            <p><strong>День Рождения:</strong> 31 Декабря</p>
+        </div>
+
+        <!-- КАСТОМНЫЙ АУДИО-ПЛЕЕР -->
+        <div class="music-container-custom">
+            
+            <div class="player-controls">
+                
+                <button id="playPauseBtn" class="play-btn">▶️</button>
+                
+                <div class="progress-bar-container" id="progressBarContainer">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="time-display">
+                    <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+                </div>
+                
+                <!-- КОНТРОЛЫ ГРОМКОСТИ -->
+                <div class="volume-controls">
+                    <button id="volumeIcon" class="volume-btn">🔊</button>
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.7" class="volume-slider">
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Ссылки -->
+        <div class="links" style="margin-top: 30px;">
+            <a href="https://t.me/Gamse_Over_mosh" target="_blank">Telegram</a>
+            <a href="https://steamcommunity.com/profiles/76561199182615593/" target="_blank">Steam</a>
+        </div>
+    </div>
+
+     <!-- === JavaScript для возраста И НОВОГО ПЛЕЕРА (Обновлено для триггера) === -->
+    <script>
+        // 1. РАСЧЕТ ВОЗРАСТА (2006)
+        const birthDate = new Date("2006-12-31T00:00:00"); 
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        
+        const hasHadBirthday = today.getMonth() > birthDate.getMonth() || 
+                               (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+        
+        if (!hasHadBirthday) { age--; }
+        document.getElementById('age').textContent = age;
+
+
+        // 2. КОНТРОЛЛЕР АУДИО (Custom Player Logic)
+        const audio = document.getElementById('customAudioPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const progressFill = document.getElementById('progressFill');
+        const progressBarContainer = document.getElementById('progressBarContainer');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const durationDisplay = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const audioOverlay = document.getElementById('audioOverlay'); // Получаем оверлей
+
+        // Форматирование времени
+        const formatTime = (seconds) => {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        };
+
+        // Загрузка метаданных
+        audio.addEventListener('loadedmetadata', () => {
+            durationDisplay.textContent = formatTime(audio.duration);
+        });
+
+        // Обновление времени и прогресса
+        audio.addEventListener('timeupdate', () => {
+            const percentage = (audio.currentTime / audio.duration) * 100;
+            progressFill.style.width = `${percentage}%`;
+            currentTimeDisplay.textContent = formatTime(audio.currentTime);
+        });
+
+        // Кнопка Play/Pause
+        const togglePlay = () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseBtn.textContent = '⏸️';
+            } else {
+                audio.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+        };
+        
+        // Перемотка
+        progressBarContainer.addEventListener('click', (e) => {
+            const rect = progressBarContainer.getBoundingClientRect();
+            const clickPercentage = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = clickPercentage * audio.duration;
+        });
+
+        // Сброс кнопки при окончании трека
+        audio.addEventListener('ended', () => {
+            playPauseBtn.textContent = '▶️';
+            progressFill.style.width = '0%';
+            currentTimeDisplay.textContent = '0:00';
+            audio.currentTime = 0;
+        });
+
+        // --- УПРАВЛЕНИЕ ГРОМКОСТЬЮ ---
+        volumeSlider.addEventListener('input', () => {
+            audio.volume = volumeSlider.value;
+            if (audio.volume === 0) {
+                volumeIcon.textContent = '🔇';
+            } else if (audio.volume < 0.5) {
+                volumeIcon.textContent = '🔉';
+            } else {
+                volumeIcon.textContent = '🔊';
+            }
+        });
+        
+        // --- ТРИГГЕР АВТОПЛЕЯ (Проверяем, что оверлей найден!) ---
+        audioOverlay.addEventListener('click', () => {
+            console.log("Overlay Click Detected! Attempting to play audio..."); // Добавлено для отладки
+            audioOverlay.style.display = 'none'; 
+            togglePlay(); 
+        });
+
+        // Иконка громкости
+        if (audio.volume > 0.5) {
+            volumeIcon.textContent = '🔊';
+        } else if (audio.volume > 0) {
+             volumeIcon.textContent = '🔉';
+        } else {
+            volumeIcon.textContent = '🔇';
+        }
+    </script>
